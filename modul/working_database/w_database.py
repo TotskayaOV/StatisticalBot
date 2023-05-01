@@ -44,7 +44,7 @@ class DataBase:
     def create_table_portal(self):
         sql = '''CREATE TABLE IF NOT EXISTS portal 
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date DATETIME, user INTEGER, verif INTEGER, other_act INTEGER)'''
+        date DATETIME, user INTEGER, verif INTEGER)'''
         self.execute(sql, commit=True)
 
     def create_table_jira_count(self):
@@ -85,9 +85,9 @@ class DataBase:
 
     def add_portal(self, portal_data: dict):
         parameters = (portal_data.get('date'), portal_data.get('user'),
-                      portal_data.get('verif'), portal_data.get('other_act'))
-        sql = '''INSERT INTO portal (date, user, verif, other_act) 
-        VALUES (?, ?, ?, ?)'''
+                      portal_data.get('verif'))
+        sql = '''INSERT INTO portal (date, user, verif) 
+        VALUES (?, ?, ?)'''
         self.execute(sql, parameters, commit=True)
 
     def add_jira_count(self, jira_data: dict):
@@ -110,13 +110,18 @@ class DataBase:
 
     def add_general(self, general_data: dict):
         parameters = (general_data.get('date'), general_data.get('new'), general_data.get('fast'))
-        sql = '''INSERT INTO jira_time (date, new, fast) 
+        sql = '''INSERT INTO general_data (date, new, fast) 
         VALUES (?, ?, ?)'''
         self.execute(sql, parameters, commit=True)
 
     def update_portal(self, new_data: dict):
-        parameters = (new_data.get('verif'), new_data.get('other_act'), new_data.get('id'))
-        sql = '''UPDATE portal SET verif=?, other_act=? WHERE id=? '''
+        parameters = (new_data.get('verif'), new_data.get('id'))
+        sql = '''UPDATE portal SET verif=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
+    def update_general(self, new_data: dict):
+        parameters = (new_data.get('new'), new_data.get('fast'), new_data.get('date'))
+        sql = '''UPDATE portal SET new=?, fast=? WHERE date=? '''
         self.execute(sql, parameters, commit=True)
 
     def get_user(self):

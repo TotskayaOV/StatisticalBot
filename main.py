@@ -1,7 +1,7 @@
 from aiogram import executor
 from view import dp
 from loader import on_startup, on_shutdown
-# import middleware
+import middleware
 
 
 async def on_start(_):
@@ -9,7 +9,7 @@ async def on_start(_):
 
 
 if __name__ == '__main__':
-    # middleware.setup(dp)
+    middleware.setup(dp)
     executor.start_polling(dispatcher=dp,
                            skip_updates=True,
                            on_startup=on_startup,
