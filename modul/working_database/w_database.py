@@ -124,6 +124,11 @@ class DataBase:
         sql = '''UPDATE portal SET new=?, fast=? WHERE date=? '''
         self.execute(sql, parameters, commit=True)
 
+    def update_user(self, new_data: dict):
+        parameters = (new_data.get('role'), new_data.get('id'))
+        sql = '''UPDATE user SET role=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
     def get_user(self):
         sql = '''SELECT * FROM user'''
         return self.execute(sql, fetchall=True)

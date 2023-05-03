@@ -15,20 +15,7 @@ def read_portal_file(path: str)  -> list:
             temp_string2 = temp_string.rstrip("\n")
             db_list.append(temp_string2.split(','))
         return db_list
-    # db_list = []
-    # with open(path, 'r', encoding='UTF-8') as file:
-    #     my_list = file.readlines()
-    #     for line in range(1, len(my_list)):
-    #         values = my_list[line].split(',+')
-    #         date_action = values[0].split('T')[0]
-    #         values = values[1].split(',')
-    #         action = values[1]
-    #         coord_name = values[2].rstrip("\n")
-    #         data_dict = {'date': date_action,
-    #                      'action': action,
-    #                      'name': coord_name}
-    #         db_list.append(data_dict)
-    #     return db_list
+
 
 def read_time_jira_file(path: str)  -> list:
     '''
@@ -93,14 +80,3 @@ def read_call_file(path: str) -> list:
             db_list.append(temp_string2.split(';'))
         return db_list
 
-
-        #     values = my_list[line].split(',+')
-        #     date_action = values[0].split('T')[0]
-        #     values = values[1].split(',')
-        #     action = values[1]
-        #     coord_name = values[2].rstrip("\n")
-        #     data_dict = {'date': date_action,
-        #                  'action': action,
-        #                  'name': coord_name}
-        #     db_list.append(data_dict)
-        # return db_list

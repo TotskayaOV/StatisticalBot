@@ -6,6 +6,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from modul import DataBase
 from config import db_path
+from sending_messages import notify
 
 
 memory = MemoryStorage()
@@ -13,12 +14,12 @@ memory = MemoryStorage()
 bot = Bot(os.getenv('TOKEN'))
 dp = Dispatcher(bot, storage=memory)
 db = DataBase(db_path=db_path)
-# log_id = os.getenv('LOG_ID')
+log_id = os.getenv('LOG_ID')
 admin_id = os.getenv('ADMIN_ID')
 
 
 async def on_startup(_):
-    # notify(log_id, 'Bot started!')
+    notify(log_id, 'Bot started!')
     try:
         db.create_table_users()
         db.create_table_call()
@@ -27,9 +28,9 @@ async def on_startup(_):
         db.create_table_jira_sla()
         db.create_table_jira_time()
         db.create_table_general_data()
-        print('DataBase...ok!')
+        notify(log_id, 'DataBase .... Ok!')
     except sqlite3.OperationalError:
-        print('DataBase .... фиг вам, а не датабаза')
+        notify(log_id, 'DataBase .... фиг вам, а не датабаза')
 
 
 async def on_shutdown(_):

@@ -17,6 +17,8 @@ class AddUserRole(BaseMiddleware):
                 data['coordinator'] = False
         except:
             data['guest'] = True
+            data['admin'] = False
+            data['coordinator'] = False
 
     async def on_process_callback_query(self, call: CallbackQuery, data: dict):
         try:
@@ -32,3 +34,5 @@ class AddUserRole(BaseMiddleware):
                 data['coordinator'] = False
         except:
             data['guest'] = True
+            data['admin'] = False
+            data['coordinator'] = False

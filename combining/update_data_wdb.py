@@ -34,39 +34,6 @@ def update_wdb_portal(date):
         for key, value in dict_portal.items():
             tg_id = db.get_the_user(name=key.split(" ")[0])[0]
             db.add_portal({'date': date, 'user': tg_id, 'verif': value})
-    # list_date = dict_portal.keys()
-    # for elem in list_date:
-    #     data_portal = db.get_date_portal(date=elem)
-    #     if data_portal:
-    #         list_name = dict_portal.get(elem).keys()
-    #         for name_key in list_name:
-    #             name = name_key.split(" ")[0]
-    #             tg_id = db.get_the_user(name=name)[0]
-    #             corrector = True
-    #             for i_tuple in data_portal:
-    #                 if i_tuple[2] == tg_id:
-    #                     rewrite_dict = {'verif': dict_portal.get(elem).get(name_key)[0],
-    #                                    'other_act': dict_portal.get(elem).get(name_key)[1],
-    #                                    'id': i_tuple[0]}
-    #                     db.update_portal(rewrite_dict)
-    #                     corrector = False
-    #             if corrector:
-    #                 new_entry = {'date': elem,
-    #                              'user': tg_id,
-    #                              'verif': dict_portal.get(elem).get(name_key)[0],
-    #                              'other_act': dict_portal.get(elem).get(name_key)[1]}
-    #                 db.add_portal(new_entry)
-    #     else:
-    #         list_name = dict_portal.get(elem).keys()
-    #         for name_key in list_name:
-    #             name = name_key.split(" ")[0]
-    #             tg_id = db.get_the_user(name=name)[0]
-    #             if tg_id:
-    #                 new_entry = {'date': elem,
-    #                              'user': tg_id,
-    #                              'verif': dict_portal.get(elem).get(name_key)[0],
-    #                              'other_act': dict_portal.get(elem).get(name_key)[1]}
-    #                 db.add_portal(new_entry)
 
 
 def update_wdb_count_jira():
@@ -92,6 +59,7 @@ def update_wdb_count_jira():
             list_name = dict_count.get(elem).keys()
             for name_key in list_name:
                 name = name_key.split(" ")[0]
+                print(name)
                 tg_id = db.get_the_user(name=name)[0]
                 if tg_id:
                     new_entry = {'date': elem,
@@ -197,3 +165,37 @@ def update_wdb_call():
 # print(sla_dict.get(datetime(2023, 4, 29, 0, 0)))
 # print(count_dict.get(datetime(2023, 4, 29, 0, 0)))
 # print(call_dict.get(datetime(2023, 4, 29, 0, 0)))
+
+    # list_date = dict_portal.keys()
+    # for elem in list_date:
+    #     data_portal = db.get_date_portal(date=elem)
+    #     if data_portal:
+    #         list_name = dict_portal.get(elem).keys()
+    #         for name_key in list_name:
+    #             name = name_key.split(" ")[0]
+    #             tg_id = db.get_the_user(name=name)[0]
+    #             corrector = True
+    #             for i_tuple in data_portal:
+    #                 if i_tuple[2] == tg_id:
+    #                     rewrite_dict = {'verif': dict_portal.get(elem).get(name_key)[0],
+    #                                    'other_act': dict_portal.get(elem).get(name_key)[1],
+    #                                    'id': i_tuple[0]}
+    #                     db.update_portal(rewrite_dict)
+    #                     corrector = False
+    #             if corrector:
+    #                 new_entry = {'date': elem,
+    #                              'user': tg_id,
+    #                              'verif': dict_portal.get(elem).get(name_key)[0],
+    #                              'other_act': dict_portal.get(elem).get(name_key)[1]}
+    #                 db.add_portal(new_entry)
+    #     else:
+    #         list_name = dict_portal.get(elem).keys()
+    #         for name_key in list_name:
+    #             name = name_key.split(" ")[0]
+    #             tg_id = db.get_the_user(name=name)[0]
+    #             if tg_id:
+    #                 new_entry = {'date': elem,
+    #                              'user': tg_id,
+    #                              'verif': dict_portal.get(elem).get(name_key)[0],
+    #                              'other_act': dict_portal.get(elem).get(name_key)[1]}
+    #                 db.add_portal(new_entry)
