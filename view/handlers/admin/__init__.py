@@ -5,5 +5,7 @@ from .delete_user import dp
 from .update_user import dp
 from .mailing_coor import dp
 from .show_user import dp
+from .show_call_date import dp
+from .del_call import dp
 
 __all__ = ['dp']

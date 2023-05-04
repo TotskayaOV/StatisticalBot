@@ -184,6 +184,11 @@ class DataBase:
         sql = '''DELETE FROM general_data WHERE date=?'''
         self.execute(sql, parameters, commit=True)
 
+    def remove_call(self, date):
+        parameters = (date,)
+        sql = '''DELETE FROM call WHERE date=?'''
+        self.execute(sql, parameters, commit=True)
+
     @staticmethod
     def extract_kwargs(sql, parameters: dict) -> tuple:
         sql += ' AND '.join([f'{key} = ?' for key in parameters])
