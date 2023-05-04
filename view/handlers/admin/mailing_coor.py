@@ -30,4 +30,4 @@ async def general_date_catch(message: Message, state: FSMContext):
         await message.answer(text='Рассылка прошла успешно')
         await MailStats.next()
     except:
-        await message.answer(text='Ошибка ввода даты')
+        await message.answer(text='Ошибка ввода даты', reply_markup=kb_cancel_fsm)

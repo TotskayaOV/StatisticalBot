@@ -38,7 +38,8 @@ async def name_catch(message: Message, state: FSMContext):
             db.update_user({'id': data.get('user_id'), 'role': data.get('user_role')})
             await message.answer(f"Пользователь {data.get('user_id')} изменен в роли на {data.get('user_role')}")
         except sqlite3.OperationalError:
-            await message.answer("Ошибка добавления роли пользователю! Проверьте правильность вводимых данных")
+            await message.answer("Ошибка добавления роли пользователю! Проверьте правильность вводимых данных",
+                                 reply_markup=kb_cancel_fsm)
         await state.reset_data()
         await state.finish()
     else:

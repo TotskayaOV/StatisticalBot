@@ -30,6 +30,7 @@ async def id_user_catch(message: Message, state: FSMContext):
         db.remove_user(user_id)
         await message.answer(f"Пользователь {user_id} удален")
     except sqlite3.OperationalError:
-        await message.answer("Ошибка удаления пользователя! Проверьте правильность вводимых данных")
+        await message.answer("Ошибка удаления пользователя! Проверьте правильность вводимых данных",
+                             reply_markup=kb_cancel_fsm)
     await state.reset_data()
     await state.finish()

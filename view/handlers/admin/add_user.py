@@ -56,4 +56,4 @@ async def name_catch(message: Message, state: FSMContext):
         await state.reset_data()
         await state.finish()
     else:
-        await message.answer(text='Выберите роль пользователя', reply_markup=kb_role_user)
+        await message.answer(text='Выберите роль пользователя')
