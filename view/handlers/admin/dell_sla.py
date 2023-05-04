@@ -24,7 +24,7 @@ async def general_date_catch(message: Message, state: FSMContext):
         data_obj = message.text
         up_data = datetime.strptime(data_obj, '%Y-%m-%d')
         db.remove_sla(up_data)
-        await message.answer(text=f'данные портала за {data_obj} удалены')
+        await message.answer(text=f'данные SLA за {data_obj} удалены')
         await state.reset_data()
         await state.finish()
     except:
