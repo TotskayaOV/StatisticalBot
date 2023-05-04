@@ -175,7 +175,7 @@ class DataBase:
 
     def remove_user(self, id_user: int):
         parameters = (id_user,)
-        sql = '''DELETE FROM user WHERE user_id=?'''
+        sql = '''DELETE FROM user WHERE id=?'''
         self.execute(sql, parameters, commit=True)
 
 
