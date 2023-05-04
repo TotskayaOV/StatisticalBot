@@ -49,7 +49,7 @@ async def name_catch(message: Message, state: FSMContext):
         await state.update_data({'role': message.text})
         data = await state.get_data()
         try:
-            db.add_user_access(data)
+            db.add_user(data)
             await message.answer(f"Пользователь {data.get('name')} в роли {data.get('role')} успешно добавлен")
         except sqlite3.OperationalError:
             await message.answer("Ошибка добавления пользователя! Проверьте правильность вводимых данных")
