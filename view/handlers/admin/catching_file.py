@@ -89,7 +89,7 @@ async def portal_catch(message: Message, state: FSMContext):
         try:
             os.rename(f'./cred/{document.file_name}', './cred/portal.csv')
         except:
-            os.remove('./cred/portal.csv')
+            # os.remove('./cred/portal.csv')
             os.rename(f'./cred/{document.file_name}', './cred/portal.csv')
         finally:
             data = await state.get_data()
@@ -105,7 +105,7 @@ async def portal_catch(message: Message, state: FSMContext):
                 await message.answer(text='Данные загружены', reply_markup=kb_name_files)
             finally:
                 try:
-                    os.remove('./cred/portal.csv')
+                    # os.remove('./cred/portal.csv')
                     await NewFiles.next_step.set()
                 except Exception as err:
                     await message.answer(text=f'Ошибка удаления файлов: {err}')
