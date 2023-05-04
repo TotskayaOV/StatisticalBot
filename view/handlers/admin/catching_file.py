@@ -93,24 +93,24 @@ async def portal_catch(message: Message, state: FSMContext):
             os.rename(f'./cred/{document.file_name}', './cred/portal.csv')
         finally:
             data = await state.get_data()
-            try:
-                update_wdb_portal(data.get('general_date'))
-            except Exception as err:
-                await message.answer(text=f'Ошибка загрузки данных. Проверьте файл:'
-                                          f'расширение, кодировку, формат данных. \n'
-                                          f'Или передайте данные об ошибке: {err}')
-                await state.reset_data()
-                await state.finish()
-            else:
-                await message.answer(text='Данные загружены', reply_markup=kb_name_files)
-            finally:
-                try:
-                    os.remove('./cred/portal.csv')
-                    await NewFiles.next_step.set()
-                except Exception as err:
-                    await message.answer(text=f'Ошибка удаления файлов: {err}')
-                    await state.reset_data()
-                    await state.finish()
+            # try:
+            update_wdb_portal(data.get('general_date'))
+            # except Exception as err:
+            #     await message.answer(text=f'Ошибка загрузки данных. Проверьте файл:'
+            #                               f'расширение, кодировку, формат данных. \n'
+            #                               f'Или передайте данные об ошибке: {err}')
+            #     await state.reset_data()
+            #     await state.finish()
+            # else:
+            #     await message.answer(text='Данные загружены', reply_markup=kb_name_files)
+            # finally:
+            #     try:
+            #         os.remove('./cred/portal.csv')
+            #         await NewFiles.next_step.set()
+            #     except Exception as err:
+            #         await message.answer(text=f'Ошибка удаления файлов: {err}')
+            #         await state.reset_data()
+            #         await state.finish()
 
 @dp.message_handler(state=NewFiles.count_file, content_types=ContentTypes.ANY)
 async def count_catch(message: Message, state: FSMContext):
