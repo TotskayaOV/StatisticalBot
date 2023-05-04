@@ -23,7 +23,7 @@ async def add_user(message: Message, admin: bool):
         await message.answer('У вас нет доступа к этой функции')
 
 
-@dp.message_handler(state=NewUser.user_id)
+@dp.message_handler(state=NewUser.id)
 async def id_catch(message: Message, state: FSMContext):
     if db.get_the_user(id=message.text):
         await message.answer("Ошибка добавления пользователя!\n"
