@@ -7,5 +7,9 @@ from .mailing_coor import dp
 from .show_user import dp
 from .show_call_date import dp
 from .del_call import dp
+from .dell_sla import dp
+from .dell_time import dp
+from .dell_portal import dp
+from .dell_count import dp
 
 __all__ = ['dp']

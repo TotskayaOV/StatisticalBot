@@ -20,7 +20,10 @@ def processing_time_jira(parsed_data: list):
             if parsed_data[i][indication]:
                 time_in_seconds = round(float(parsed_data[i][indication]) * 60)
                 minutes, seconds = divmod(time_in_seconds, 60)
-                dict_line[parsed_data[0][indication]] = f'{minutes}:{seconds}'
+                if seconds < 10:
+                    dict_line[parsed_data[0][indication]] = f'{minutes}:0{seconds}'
+                else:
+                    dict_line[parsed_data[0][indication]] = f'{minutes}:{seconds}'
         data[date_line] = dict_line
     return(data)
 

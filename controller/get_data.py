@@ -22,7 +22,8 @@ def read_wb_data(data_obj, date):
     jira_count_string = '\n📦Количество выполненных заявок:\n\n'
     if jira_count_data:
         for elem in jira_count_data:
-            jira_count_string = jira_count_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3]) + '\n'
+            if int(elem[2]) != 111121:
+                jira_count_string = jira_count_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3]) + '\n'
     else:
         jira_count_string = jira_count_string + "данных за эту дату нет. 😔\n"
     jira_time_data = db.get_jira_time(date=date)
@@ -36,10 +37,17 @@ def read_wb_data(data_obj, date):
     jira_sla_string = '\n📊SLA выполнения заявок:\n\n'
     if jira_sla_data:
         all_sla = 0
+        is_Po = False
         for elem in jira_sla_data:
-            jira_sla_string = jira_sla_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3] * 100) + '%\n'
-            all_sla = all_sla + (elem[3] * 100)
-        jira_sla_string = jira_sla_string + '\nSLA отдела: ' + str(all_sla/len(jira_sla_data)) + '%\n'
+            if int(elem[2]) == 111121:
+                is_Po = True
+            if int(elem[2]) != 111121:
+                jira_sla_string = jira_sla_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3] * 100) + '%\n'
+                all_sla = all_sla + (elem[3] * 100)
+        if is_Po:
+            jira_sla_string = jira_sla_string + '\nSLA отдела: ' + str(round(all_sla / (len(jira_sla_data)-1), 1)) + '%\n'
+        else:
+            jira_sla_string = jira_sla_string + '\nSLA отдела: ' + str(round(all_sla/len(jira_sla_data), 1)) + '%\n'
     else:
         jira_sla_string = jira_sla_string + "данных за эту дату нет. 😔\n"
     call_data = db.get_call(date=date)

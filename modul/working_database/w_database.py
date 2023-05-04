@@ -189,6 +189,26 @@ class DataBase:
         sql = '''DELETE FROM call WHERE date=?'''
         self.execute(sql, parameters, commit=True)
 
+    def remove_sla(self, date):
+        parameters = (date,)
+        sql = '''DELETE FROM jira_sla WHERE date=?'''
+        self.execute(sql, parameters, commit=True)
+
+    def remove_portal(self, date):
+        parameters = (date,)
+        sql = '''DELETE FROM portal WHERE date=?'''
+        self.execute(sql, parameters, commit=True)
+
+    def remove_count(self, date):
+        parameters = (date,)
+        sql = '''DELETE FROM jira_count WHERE date=?'''
+        self.execute(sql, parameters, commit=True)
+
+    def remove_time(self, date):
+        parameters = (date,)
+        sql = '''DELETE FROM jira_time WHERE date=?'''
+        self.execute(sql, parameters, commit=True)
+
     @staticmethod
     def extract_kwargs(sql, parameters: dict) -> tuple:
         sql += ' AND '.join([f'{key} = ?' for key in parameters])

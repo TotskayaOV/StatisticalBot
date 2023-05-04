@@ -34,10 +34,14 @@ def read_user_wb_data(data_obj, date, user_id):
     jira_sla_string = ''
     all_sla = 0
     if jira_sla_data:
+        is_Po = False
         for elem in jira_sla_data:
+            if int(elem[2]) == 111121:
+                is_Po = True
             if elem[2] == user_id:
                 jira_sla_string = jira_sla_string + str(elem[3] * 100) + '%\n'
-            all_sla = all_sla + (elem[3] * 100)
+            if int(elem[2]) != 111121:
+                all_sla = all_sla + (elem[3] * 100)
     call_data = db.get_call(date=date)
     call_string = ''
     all_call = 0
@@ -50,7 +54,12 @@ def read_user_wb_data(data_obj, date, user_id):
     if general_string:
         full_string = full_string + general_string
     if all_sla:
-        full_string = full_string + 'SLA выполнения зявок в Jira отдела: ' + str(all_sla/len(jira_sla_data)) + '%\n'
+        if is_Po:
+            full_string = full_string + 'SLA выполнения зявок в Jira отдела: ' + str(round(
+                all_sla / (len(jira_sla_data) - 1), 1)) + '%\n'
+        else:
+            full_string = full_string + 'SLA выполнения зявок в Jira отдела: ' + str(round(
+                all_sla/len(jira_sla_data), 1)) + '%\n'
     if all_call:
         full_string = full_string + 'Общее количество звонков: ' + str(all_call) + '\n'
     if portal_string or jira_count_string or jira_time_string or jira_sla_string or call_string:
