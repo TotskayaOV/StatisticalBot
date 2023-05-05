@@ -255,7 +255,7 @@ async def finish_catch(callback: CallbackQuery, state: FSMContext):
 @dp.message_handler(state=NewFiles.go_message)
 # @dp.message_handler(content_types=ContentTypes.ANY)
 async def finish_state(message: Message, state: FSMContext):
-    if message.text in ['yes']:
+    if message.text in ['Да']:
         data = await state.get_data()
         up_data = data.get('general_date')
         data_obj = up_data.strftime('%d-%m-%Y')
