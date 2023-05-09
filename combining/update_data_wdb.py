@@ -59,7 +59,6 @@ def update_wdb_count_jira():
             list_name = dict_count.get(elem).keys()
             for name_key in list_name:
                 name = name_key.split(" ")[0]
-                print(name)
                 tg_id = db.get_the_user(name=name)[0]
                 if tg_id:
                     new_entry = {'date': elem,

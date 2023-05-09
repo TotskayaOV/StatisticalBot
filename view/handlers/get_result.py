@@ -17,7 +17,7 @@ class UserStats(StatesGroup):
 @dp.message_handler(commands=['result'], state=None)
 async def add_user(message: Message, admin: bool, coordinator: bool):
     if admin or coordinator:
-        await message.answer(text='Напишите дату в формате 2023-01-01', reply_markup=kb_cancel_fsm)
+        await message.answer(text='Напишите дату в формате 2023-01-31', reply_markup=kb_cancel_fsm)
         await UserStats.next()
     else:
         await message.answer('У вас нет доступа к этой функции')

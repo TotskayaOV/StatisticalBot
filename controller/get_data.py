@@ -13,7 +13,11 @@ def read_wb_data(data_obj, date):
         general_string = general_string + "данных за эту дату нет. 😔\n"
     portal_data = db.get_date_portal(date)
     portal_string = '\n🧑🏻‍💻Результаты портала:\n\n'
+    all_portal = 0
     if portal_data:
+        for elem in portal_data:
+            all_portal = all_portal + elem[3]
+        portal_string = portal_string + '▪️Всего анкет проверено: ' + str(all_portal) + '\n'
         for elem in portal_data:
             portal_string = portal_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3]) + '\n'
     else:

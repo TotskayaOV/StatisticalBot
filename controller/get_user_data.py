@@ -9,15 +9,18 @@ def read_user_wb_data(data_obj, date, user_id):
         for elem in genetal_data:
             general_string = general_string + 'Количество новых анкет: ' + str(elem[1])\
                             + '\nКоличество верифицированных за 15 минут: ' + str(elem[2])\
-                            + '\n% верификации за 15 минут: ' + str(round((elem[2] * 100) / elem[1], 2)) + '%\n'
+                            + '\n\t\t% верификации за 15 минут: ' + str(round((elem[2] * 100) / elem[1], 2)) + '%\n'
     portal_data = db.get_date_portal(date)
     portal_string = ''
+    all_portal = 0
     if portal_data:
+        for elem in portal_data:
+            all_portal = all_portal + elem[3]
         for elem in portal_data:
             if elem[2] == user_id:
                 portal_string = portal_string + '\tОбработано анкет: ' + str(elem[3]) + '\n'
-                port_result = (elem[3] * 100) / genetal_data[0][1]
-                portal_string = portal_string + str(round(port_result, 2)) + '\t\t\t\t% от общего количества\n'
+                port_result = (elem[3] * 100) / all_portal
+                portal_string = portal_string + '\t\t\t\t' + str(round(port_result, 2)) + '% от общего количества\n'
     jira_count_data = db.get_jira_count(date=date)
     jira_count_string = ''
     if jira_count_data:
@@ -53,6 +56,15 @@ def read_user_wb_data(data_obj, date, user_id):
     full_string = 'Данные за ' + data_obj + ':\n'
     if general_string:
         full_string = full_string + general_string
+    if all_portal:
+        final_word = 'анкет'
+        if all_portal == 1 or (all_portal < 100 and all_portal%10 == 1)\
+                or (all_portal%100 == 1 and all_portal%10 != 11):
+            final_word = 'анкета'
+        elif 1 < all_portal < 5 or (all_portal < 100 and 1 < all_portal%10 < 5)\
+                or (1 < all_portal%100 <5 and 10 < all_portal%10 < 20):
+            final_word = 'анкеты'
+        full_string = full_string + 'Всего проверено ' + str(all_portal) + ' ' + final_word + '\n'
     if all_sla:
         if is_Po:
             full_string = full_string + 'SLA выполнения зявок в Jira отдела: ' + str(round(

@@ -14,7 +14,7 @@ class StatsDate(StatesGroup):
 @dp.message_handler(commands=['gs_date'], state=None)
 async def add_user(message: Message, admin: bool):
     if admin:
-        await message.answer(text='Напишите дату в формате 2023-01-01', reply_markup=kb_cancel_fsm)
+        await message.answer(text='Напишите дату в формате 2023-01-31', reply_markup=kb_cancel_fsm)
         await StatsDate.next()
     else:
         await message.answer('У вас нет доступа к этой функции')
