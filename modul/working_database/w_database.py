@@ -121,12 +121,27 @@ class DataBase:
 
     def update_general(self, new_data: dict):
         parameters = (new_data.get('new'), new_data.get('fast'), new_data.get('date'))
-        sql = '''UPDATE portal SET new=?, fast=? WHERE date=? '''
+        sql = '''UPDATE general_data SET new=?, fast=? WHERE date=? '''
         self.execute(sql, parameters, commit=True)
 
     def update_user(self, new_data: dict):
         parameters = (new_data.get('role'), new_data.get('id'))
         sql = '''UPDATE user SET role=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
+    def update_jira_count(self, new_data: dict):
+        parameters = (new_data.get('count'), new_data.get('id'))
+        sql = '''UPDATE jira_count SET count=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
+    def update_jira_sla(self, new_data: dict):
+        parameters = (new_data.get('sla'), new_data.get('id'))
+        sql = '''UPDATE jira_sla SET sla=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
+    def update_jira_time(self, new_data: dict):
+        parameters = (new_data.get('time'), new_data.get('id'))
+        sql = '''UPDATE jira_time SET time=? WHERE id=? '''
         self.execute(sql, parameters, commit=True)
 
     def get_user(self):

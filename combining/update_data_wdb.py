@@ -12,13 +12,53 @@ from modul import read_call_file
 from modul import processing_call
 
 
+def rewriting_data_db_jira(dict_table: dict):
+    """
+    Записывает данные джиры в БД, если обнаружены какие-либо данные за дату. Перезаписывает или делает новую запись
+    :param dict_table: {dict_data: {name: value}, db_data: [tuples], upd_method: , add_method: , col_name: }
+    :return:
+    """
+    updating_method = dict_table.get('upd_method')
+    adding_method = dict_table.get('add_method')
+    column_name = dict_table.get('col_name')
+    list_name = dict_table.get('dict_data').keys()
+    for name_key in list_name:
+        name = name_key.split(" ")[0]
+        tg_id = db.get_the_user(name=name)[0]
+        update_status = True
+        for elem in dict_table.get('db_data'):
+            if elem[2] == tg_id:
+                dict_from_db = {'id': elem[0], column_name: dict_table.get('dict_data').get(name_key)}
+                updating_method(dict_from_db)
+                update_status = False
+        if update_status:
+            adding_method({'date': dict_table.get('db_data')[0][1], 'user': int(tg_id),
+                           column_name: dict_table.get('dict_data').get(name_key)})
+
+def writing_db_jira(dict_table: dict):
+    """
+    Записывает данные джиры в БД, если записей за дату нет
+    :param dict_table: {date_obj: datetime, dict_data: {name: value}, add_method: , col_name: }
+    :return:
+    """
+    adding_method = dict_table.get('add_method')
+    column_name = dict_table.get('col_name')
+    list_name = dict_table.get('dict_data').keys()
+    for name_key in list_name:
+        name = name_key.split(" ")[0]
+        tg_id = db.get_the_user(name=name)[0]
+        adding_method({'date': dict_table.get('date_obj'), 'user': int(tg_id),
+                       column_name: dict_table.get('dict_data').get(name_key)})
+
+
 def update_wdb_general(data: dict):
     temp_tuple = db.get_general(date=data.get('date'))
     if temp_tuple:
-        if data.get('new') != temp_tuple[0][1] or data.get('fast') != temp_tuple[0][2]:
-            db.update_portal(data)
+        if int(data.get('new')) != temp_tuple[0][1] or int(data.get('fast')) != temp_tuple[0][2]:
+            db.update_general(data)
     else:
         db.add_general(data)
+
 
 def update_wdb_portal(date):
     dict_portal = processing_data_portal(read_portal_file('./cred/portal.csv'))
@@ -42,29 +82,11 @@ def update_wdb_count_jira():
     for elem in list_date:
         data_portal = db.get_jira_count(date=elem)
         if data_portal:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                corrector = True
-                for i_tuple in data_portal:
-                    if i_tuple[2] == tg_id:
-                        corrector = False
-                if corrector:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'count': dict_count.get(elem).get(name_key)}
-                    db.add_jira_count(new_entry)
+            rewriting_data_db_jira({'dict_data': dict_count.get(elem), 'db_data': data_portal,
+                           'upd_method': db.update_jira_count, 'add_method':  db.add_jira_count, 'col_name': 'count'})
         else:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                if tg_id:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'count': dict_count.get(elem).get(name_key)}
-                    db.add_jira_count(new_entry)
+            writing_db_jira({'date_obj': elem, 'dict_data': dict_count.get(elem),
+                             'add_method':  db.add_jira_count, 'col_name': 'count'})
 
 
 def update_wdb_sla_jira():
@@ -73,29 +95,13 @@ def update_wdb_sla_jira():
     for elem in list_date:
         data_portal = db.get_jira_sla(date=elem)
         if data_portal:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                corrector = True
-                for i_tuple in data_portal:
-                    if i_tuple[2] == tg_id:
-                        corrector = False
-                if corrector:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'sla': dict_count.get(elem).get(name_key)}
-                    db.add_jira_sla(new_entry)
+            rewriting_data_db_jira({'dict_data': dict_count.get(elem), 'db_data': data_portal,
+                           'upd_method': db.update_jira_sla, 'add_method': db.add_jira_sla, 'col_name': 'sla'})
         else:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                if tg_id:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'sla': dict_count.get(elem).get(name_key)}
-                    db.add_jira_sla(new_entry)
+            writing_db_jira({'date_obj': elem, 'dict_data': dict_count.get(elem),
+                             'add_method': db.add_jira_sla, 'col_name': 'sla'})
+
+
 
 def update_wdb_time_jira():
     dict_count = processing_time_jira(read_time_jira_file('./cred/time_jira.csv'))
@@ -103,29 +109,11 @@ def update_wdb_time_jira():
     for elem in list_date:
         data_portal = db.get_jira_time(date=elem)
         if data_portal:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                corrector = True
-                for i_tuple in data_portal:
-                    if i_tuple[2] == tg_id:
-                        corrector = False
-                if corrector:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'time': dict_count.get(elem).get(name_key)}
-                    db.add_jira_time(new_entry)
+            rewriting_data_db_jira({'dict_data': dict_count.get(elem), 'db_data': data_portal,
+                           'upd_method': db.update_jira_time, 'add_method': db.add_jira_time, 'col_name': 'time'})
         else:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                if tg_id:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'time': dict_count.get(elem).get(name_key)}
-                    db.add_jira_time(new_entry)
+            writing_db_jira({'date_obj': elem, 'dict_data': dict_count.get(elem),
+                             'add_method': db.add_jira_time, 'col_name': 'time'})
 
 
 def update_wdb_call():
@@ -157,44 +145,3 @@ def update_wdb_call():
                                  'user': tg_id,
                                  'count': dict_count.get(elem).get(name_key)}
                     db.add_call(new_entry)
-
-
-# print(dict.get(datetime(2023, 4, 29, 0, 0)))
-# print(jira_dict.get(datetime(2023, 4, 29, 0, 0)))
-# print(sla_dict.get(datetime(2023, 4, 29, 0, 0)))
-# print(count_dict.get(datetime(2023, 4, 29, 0, 0)))
-# print(call_dict.get(datetime(2023, 4, 29, 0, 0)))
-
-    # list_date = dict_portal.keys()
-    # for elem in list_date:
-    #     data_portal = db.get_date_portal(date=elem)
-    #     if data_portal:
-    #         list_name = dict_portal.get(elem).keys()
-    #         for name_key in list_name:
-    #             name = name_key.split(" ")[0]
-    #             tg_id = db.get_the_user(name=name)[0]
-    #             corrector = True
-    #             for i_tuple in data_portal:
-    #                 if i_tuple[2] == tg_id:
-    #                     rewrite_dict = {'verif': dict_portal.get(elem).get(name_key)[0],
-    #                                    'other_act': dict_portal.get(elem).get(name_key)[1],
-    #                                    'id': i_tuple[0]}
-    #                     db.update_portal(rewrite_dict)
-    #                     corrector = False
-    #             if corrector:
-    #                 new_entry = {'date': elem,
-    #                              'user': tg_id,
-    #                              'verif': dict_portal.get(elem).get(name_key)[0],
-    #                              'other_act': dict_portal.get(elem).get(name_key)[1]}
-    #                 db.add_portal(new_entry)
-    #     else:
-    #         list_name = dict_portal.get(elem).keys()
-    #         for name_key in list_name:
-    #             name = name_key.split(" ")[0]
-    #             tg_id = db.get_the_user(name=name)[0]
-    #             if tg_id:
-    #                 new_entry = {'date': elem,
-    #                              'user': tg_id,
-    #                              'verif': dict_portal.get(elem).get(name_key)[0],
-    #                              'other_act': dict_portal.get(elem).get(name_key)[1]}
-    #                 db.add_portal(new_entry)
