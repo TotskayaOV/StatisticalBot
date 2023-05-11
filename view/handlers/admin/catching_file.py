@@ -55,6 +55,9 @@ async def all_task_catch(message: Message, state: FSMContext):
 @dp.message_handler(state=NewFiles.fast_task, content_types=ContentTypes.ANY)
 async def all_task_catch(message: Message, state: FSMContext):
     await state.update_data({'fast_task': message.text})
+    data = await state.get_data()
+    update_wdb_general({'date': data.get('general_date'), 'new': data.get('all_task'),
+                        'fast': data.get('fast_task')})
     await message.answer(text='Выберите тип файла для загрузки или завершите ввод',
                          reply_markup=kb_name_files)
     await NewFiles.next_step.set()
@@ -244,22 +247,22 @@ async def finish_catch(callback: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(yesno_data.filter(yes_no='yes'), state=NewFiles.yes_no)
 async def finish_catch(callback: CallbackQuery, state: FSMContext):
-    data = await state.get_data()
-    update_wdb_general({'date': data.get('general_date'), 'new': data.get('all_task'),
-                        'fast': data.get('fast_task')})
     chat_id = callback.from_user.id
     await dp.bot.send_message(chat_id, text='Показать результаты?', reply_markup=kb_yesno)
     await NewFiles.go_message.set()
 
 
 @dp.message_handler(state=NewFiles.go_message)
-# @dp.message_handler(content_types=ContentTypes.ANY)
 async def finish_state(message: Message, state: FSMContext):
     if message.text in ['Да']:
         data = await state.get_data()
-        up_data = data.get('general_date')
-        data_obj = up_data.strftime('%d-%m-%Y')
-        texr_result = read_wb_data(data_obj, up_data)
+        if data:
+            up_data = data.get('general_date')
+            data_obj = up_data.strftime('%d-%m-%Y')
+            texr_result = read_wb_data(data_obj, up_data)
+        else:
+            texr_result = 'Невозможно показать результат в режиме ввода. Сделайте запрос через отдельную команду ' \
+                          '/gs_date и перепроверьте загруженные данные'
         await message.answer(text=texr_result)
         await state.reset_data()
         await state.finish()

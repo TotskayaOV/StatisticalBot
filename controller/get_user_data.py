@@ -58,13 +58,15 @@ def read_user_wb_data(data_obj, date, user_id):
         full_string = full_string + general_string
     if all_portal:
         final_word = 'анкет'
-        if all_portal == 1 or (all_portal < 100 and all_portal % 10 == 1)\
-                or (all_portal % 100 == 1 and all_portal % 10 != 11):
+        prefinal_word = 'проверено '
+        if all_portal == 1 or (20 < all_portal < 100 and all_portal % 10 == 1)\
+                or (all_portal % 10 == 1 and all_portal % 100 != 11):
             final_word = 'анкета'
-        elif 1 < all_portal < 5 or (all_portal < 100 and 1 < all_portal % 10 < 5)\
-                or (1 < all_portal % 100 < 5 and (all_portal % 100) / 10 != 1):
+            prefinal_word = 'проверена '
+        elif 1 < all_portal < 5 or (20 < all_portal < 100 and 1 < all_portal % 10 < 5)\
+                or (1 < all_portal % 10 < 5 and (all_portal % 100 < 11 or all_portal % 100 > 20)):
             final_word = 'анкеты'
-        full_string = full_string + 'Всего проверено ' + str(all_portal) + ' ' + final_word + '\n'
+        full_string = full_string + 'Всего ' + prefinal_word + str(all_portal) + ' ' + final_word + '\n'
     if all_sla:
         if is_Po:
             full_string = full_string + 'SLA выполнения зявок в Jira отдела: ' + str(round(
