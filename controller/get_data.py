@@ -1,4 +1,5 @@
 from loader import db
+from .combining_data import summation_data_general_portal, summation_data_jira_call
 
 
 def read_wb_data(data_obj, date):
@@ -68,3 +69,36 @@ def read_wb_data(data_obj, date):
                   + jira_time_string + jira_sla_string + call_string
     return (full_string)
 
+def read_wb_period(que_dict: dict):
+    """
+
+    :param que_dict: {name_beg_date: str, name_end_date: str, beg_date: datetime, end_date: datetime}
+    :return:
+    """
+    finally_string = f"Данные за период {que_dict.get('name_beg_date')} - {que_dict.get('name_end_date')}\n\n"
+    portal_data = summation_data_general_portal({'begin_period': que_dict.get('beg_date'),
+                                                 'end_period': que_dict.get('end_date')})
+    finally_string += f"Пришло на портал новых партнеров: {portal_data.get('new')}\n" \
+                      f"из них верифицировано за 15 минут" \
+                      f" {round(portal_data.get('fast')*100/portal_data.get('new'), 1)}%\n" \
+                      f"Всего выполнено проверок: {portal_data.get('total')}\n"
+    jira_count_data = summation_data_jira_call({'begin_period': que_dict.get('beg_date'),
+                                                 'end_period': que_dict.get('end_date'),
+                                                'get_method': db.get_jira_count})
+    jira_sla_data = summation_data_jira_call({'begin_period': que_dict.get('beg_date'),
+                                                 'end_period': que_dict.get('end_date'),
+                                                'get_method': db.get_jira_sla})
+    jira_time_data = summation_data_jira_call({'begin_period': que_dict.get('beg_date'),
+                                              'end_period': que_dict.get('end_date'),
+                                              'get_method': db.get_jira_time})
+    call_data = summation_data_jira_call({'begin_period': que_dict.get('beg_date'),
+                                              'end_period': que_dict.get('end_date'),
+                                              'get_method': db.get_call})
+    time_in_seconds = round(jira_time_data.get('time') / jira_time_data.get('count') * 60)
+    minutes, seconds = divmod(time_in_seconds, 60)
+    finally_string += f"Заявок в Jira выполнено: {jira_count_data.get('total')}\n" \
+                      f"SLA выполнения заявок за период составил" \
+                      f" {round((jira_sla_data.get('total')/jira_sla_data.get('count')) * 100, 1)}%\n" \
+                      f"Среднее время выполнения заявки сотавило: {minutes} мин. {seconds} сек.\n" \
+                      f"Количество звонков: {call_data.get('total')}"
+    return finally_string

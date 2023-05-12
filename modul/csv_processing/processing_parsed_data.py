@@ -3,11 +3,18 @@ from datetime import datetime
 def processing_data_portal(parsed_data: list):
     data = {}
     for elem in parsed_data:
-        if data.get(elem[0], 0) == 0:
-            data[elem[0]] = int(elem[2])
+        if len(elem) > 2:
+            if data.get(elem[0], 0) == 0:
+                data[elem[0]] = int(elem[2])
+            else:
+                count = data.get(elem[0])
+                data[elem[0]] = count + int(elem[2])
         else:
-            count = data.get(elem[0])
-            data[elem[0]] = count + int(elem[2])
+            if data.get(elem[0], 0) == 0:
+                data[elem[0]] = int(elem[1])
+            else:
+                count = data.get(elem[0])
+                data[elem[0]] = count + int(elem[1])
     return data
 
 
