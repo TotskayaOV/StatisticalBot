@@ -89,3 +89,11 @@ def read_user_wb_data(data_obj, date, user_id):
         if call_string:
             full_string += '📞 Количество звонков: ' + call_string
     return (full_string)
+
+def read_user_period(que_dict: dict):
+    """
+
+    :param que_dict: {name_beg_date: str, name_end_date: str, beg_date: datetime, end_date: datetime, user_id: int}
+    :return: string
+    """
+    pass

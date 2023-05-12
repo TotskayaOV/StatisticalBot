@@ -1,5 +1,6 @@
 from loader import db
 from .combining_data import summation_data_general_portal, summation_data_jira_call
+from .combining_data import summation_data_general_portal_user, summation_data_user_jira_call
 
 
 def read_wb_data(data_obj, date):
@@ -73,7 +74,7 @@ def read_wb_period(que_dict: dict):
     """
 
     :param que_dict: {name_beg_date: str, name_end_date: str, beg_date: datetime, end_date: datetime}
-    :return:
+    :return: string
     """
     finally_string = f"Данные за период {que_dict.get('name_beg_date')} - {que_dict.get('name_end_date')}\n\n"
     portal_data = summation_data_general_portal({'begin_period': que_dict.get('beg_date'),
@@ -101,4 +102,45 @@ def read_wb_period(que_dict: dict):
                       f" {round((jira_sla_data.get('total')/jira_sla_data.get('count')) * 100, 1)}%\n" \
                       f"Среднее время выполнения заявки сотавило: {minutes} мин. {seconds} сек.\n" \
                       f"Количество звонков: {call_data.get('total')}"
-    return finally_string
+    # фомирование списка поименно
+    users_list = db.get_user()
+    portal_string = '✅ ПОРТАЛ:\n'
+    jira_string = '✅ JIRA:\n'
+    call_string = '✅ ЗВОНКИ:\n'
+    for elem in users_list:
+        if elem[2] != 'deactivated':
+            pt_dt = summation_data_general_portal_user({'begin_period': que_dict.get('beg_date'),
+                                                        'end_period': que_dict.get('end_date'), 'user_id': elem[0]})
+            jc_dt = summation_data_user_jira_call({'begin_period': que_dict.get('beg_date'),
+                                                   'end_period': que_dict.get('end_date'),
+                                                   'get_method': db.get_jira_count, 'user_id': elem[0]})
+            jt_dt = summation_data_user_jira_call({'begin_period': que_dict.get('beg_date'),
+                                                  'end_period': que_dict.get('end_date'),
+                                                   'get_method': db.get_jira_time, 'user_id': elem[0]})
+            js_dt = summation_data_user_jira_call({'begin_period': que_dict.get('beg_date'),
+                                                   'end_period': que_dict.get('end_date'),
+                                                   'get_method': db.get_jira_sla, 'user_id': elem[0]})
+            cl_dt = summation_data_user_jira_call({'begin_period': que_dict.get('beg_date'),
+                                                   'end_period': que_dict.get('end_date'),
+                                                   'get_method': db.get_call, 'user_id': elem[0]})
+            if portal_data.get('total') == 0:
+                portal_string = 'нет данных'
+            else:
+                portal_string += "▪️ " + elem[1] + f":\n проверено анкет: {pt_dt.get('total')}, " \
+                                           f"{round(pt_dt.get('total') * 100 / portal_data.get('total'), 1)}% " \
+                                           f"от общего количества\n" \
+                                           f"смен на портале: {pt_dt.get('day_count')}\n"
+            if jt_dt.get('day_count') != 0:
+                time_in_seconds_us = round(jt_dt.get('time') / jt_dt.get('day_count') * 60)
+                minutes_us, seconds_us = divmod(time_in_seconds_us, 60)
+            else:
+                minutes_us, seconds_us = 0, 0
+            if js_dt.get('day_count') != 0:
+                sla_user = round(js_dt.get('total') / js_dt.get('day_count') * 100, 2)
+            else:
+                sla_user = 0
+            jira_string += "▪️ " + elem[1] + f"\nвыполнено заявок: {jc_dt.get('total')} SLA = {sla_user}%\n" \
+                                     f"среднее время выполнения: {minutes_us} мин. {seconds_us} сек.\n"
+            call_string += "▪️ " + elem[1] + f"\nколичество звонков: {cl_dt.get('total')}\n" \
+                                     f"количество дней на звонках: {cl_dt.get('day_count')}\n"
+    return [finally_string, portal_string, jira_string, call_string]

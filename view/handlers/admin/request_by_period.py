@@ -51,10 +51,12 @@ async def general_date_catch(message: Message, state: FSMContext):
             data = await state.get_data()
             result = read_wb_period({'name_beg_date': data.get('str_begin'), 'name_end_date': data.get('str_end'),
                                      'beg_date': data.get('begin_date'), 'end_date': data.get('end_date')})
-            await message.answer(text=result, reply_markup=kb_yesno)
+            for str_elem in result:
+                await message.answer(text=str_elem)
             await state.reset_data()
             await state.finish()
         except Exception as err:
             await message.answer(text=f'Ошибка: {err}')
+            data = await state.get_data()
             await state.reset_data()
             await state.finish()
