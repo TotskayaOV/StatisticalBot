@@ -18,7 +18,7 @@ def summation_data_jira_call(date_dict: dict):
         list_data = query_method(date=date1)
         if list_data:
             for elem in list_data:
-                if elem[2] != 11334455:
+                if elem[2] != 111121:
                     if type(elem[3]) == str and ':' in elem[3]:
                         hours, minutes = map(int, elem[3].split(":"))
                         decimal_time += hours + minutes / 60
