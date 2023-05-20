@@ -25,8 +25,11 @@ def read_user_wb_data(data_obj, date, user_id):
                 portal_string = portal_string + '\t\t\t\t' + str(round(port_result, 2)) + '% от общего количества\n'
     jira_count_data = db.get_jira_count(date=date)
     jira_count_string = ''
+    count_jira = 0
     if jira_count_data:
         for elem in jira_count_data:
+            if int(elem[2]) != 111121:
+                count_jira += int(elem[3])
             if elem[2] == user_id:
                 jira_count_string = jira_count_string + str(elem[3]) + '\n'
     jira_time_data = db.get_jira_time(date=date)
@@ -69,6 +72,8 @@ def read_user_wb_data(data_obj, date, user_id):
                 or (1 < all_portal % 10 < 5 and (all_portal % 100 < 11 or all_portal % 100 > 20)):
             final_word = 'анкеты'
         full_string = full_string + 'Всего ' + prefinal_word + str(all_portal) + ' ' + final_word + '\n'
+    if count_jira:
+        full_string = full_string + f"Всего заявок в Jira выполнено: {str(count_jira)}\n"
     if all_sla:
         if is_Po:
             full_string = full_string + 'SLA выполнения зявок в Jira отдела: ' + str(round(

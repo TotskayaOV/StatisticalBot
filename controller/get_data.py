@@ -25,11 +25,14 @@ def read_wb_data(data_obj, date):
     else:
         portal_string = portal_string + "данных за эту дату нет. 😔\n"
     jira_count_data = db.get_jira_count(date=date)
+    count_jira = 0
     jira_count_string = '\n📦Количество выполненных заявок:\n\n'
     if jira_count_data:
         for elem in jira_count_data:
             if int(elem[2]) != 111121:
                 jira_count_string = jira_count_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3]) + '\n'
+                count_jira += int(elem[3])
+        jira_count_string += f"\nВсего заявок выполнено: {str(count_jira)}\n"
     else:
         jira_count_string = jira_count_string + "данных за эту дату нет. 😔\n"
     jira_time_data = db.get_jira_time(date=date)
