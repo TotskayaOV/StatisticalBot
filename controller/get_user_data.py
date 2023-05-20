@@ -47,7 +47,7 @@ def read_user_wb_data(data_obj, date, user_id):
             if int(elem[2]) == 111121:
                 is_Po = True
             if elem[2] == user_id:
-                jira_sla_string = jira_sla_string + str(elem[3] * 100) + '%\n'
+                jira_sla_string = jira_sla_string + str(round(elem[3] * 100, 2)) + '%\n'
             if int(elem[2]) != 111121:
                 all_sla = all_sla + (elem[3] * 100)
     call_data = db.get_call(date=date)
