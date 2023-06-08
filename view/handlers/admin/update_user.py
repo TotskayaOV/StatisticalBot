@@ -15,6 +15,12 @@ class UpdUser(StatesGroup):
 
 @dp.message_handler(commands=['upd_user'], state=None)
 async def upd_user(message: Message, admin: bool):
+    """
+    обновляет роль пользователя
+    :param message:
+    :param admin:
+    :return:
+    """
     if admin or int(admin_id) == message.from_user.id:
         await message.answer(text='Введите id (только цифры)', reply_markup=kb_cancel_fsm)
         await UpdUser.user_id.set()

@@ -11,6 +11,12 @@ from aiogram.types import Message
 
 @dp.message_handler(commands=['show_us'])
 async def delete_user(message: Message, admin: bool):
+    """
+    показать всех пользователей и их статус
+    :param message:
+    :param admin:
+    :return:
+    """
     if admin:
         temp_list = db.get_user()
         text_string = ''

@@ -16,6 +16,12 @@ class OneUserStats(StatesGroup):
 
 @dp.message_handler(commands=['us_date'], state=None)
 async def stats_user(message: Message, admin: bool):
+    """
+    Показать статистику пользователя за 1 день
+    :param message:
+    :param admin:
+    :return:
+    """
     if admin or int(admin_id) == message.from_user.id:
         await message.answer(text='Напишите дату в формате 2023-01-31', reply_markup=kb_cancel_fsm)
         await OneUserStats.next()

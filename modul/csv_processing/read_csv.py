@@ -42,10 +42,11 @@ def read_SLA_jira_file(path: str) -> list:
     db_list = []
     with open(path, 'r', encoding='UTF-8') as file:
         my_list = file.readlines()
-        for line in range(len(my_list)):
+        for line in range(1, len(my_list)):
             temp_string = my_list[line]
             temp_string2 = temp_string.rstrip("\n")
             db_list.append(temp_string2.split(','))
+        print(db_list)
         return db_list
 
 def read_count_jira_file(path: str) -> list:
@@ -58,7 +59,7 @@ def read_count_jira_file(path: str) -> list:
     db_list = []
     with open(path, 'r', encoding='UTF-8') as file:
         my_list = file.readlines()
-        for line in range(len(my_list)):
+        for line in range(1, len(my_list)):
             temp_string = my_list[line]
             temp_string2 = temp_string.rstrip("\n")
             db_list.append(temp_string2.split(','))

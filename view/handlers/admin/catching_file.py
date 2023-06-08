@@ -267,6 +267,5 @@ async def finish_state(message: Message, state: FSMContext):
         await state.reset_data()
         await state.finish()
     else:
-        await message.answer(text='Ups')
         await state.reset_data()
         await state.finish()

@@ -52,17 +52,17 @@ async def finish_state(message: Message, state: FSMContext):
             await state.reset_data()
             await state.finish()
 
-@dp.message_handler(state=MailStats.finish, content_types=ContentTypes.ANY)
-async def general_date_catch(message: Message, state: FSMContext):
-    try:
-        text1 = message.text
-        comment = '\n' + text1
-        data = await state.get_data()
-        data_obj = data.get('general_date').strftime('%d-%m-%Y')
-        await get_mail_for_date(data_obj, data.get('general_date'), comment)
-        await message.answer(text='Рассылка прошла успешно')
-        await MailStats.next()
-    except Exception as err:
-        await message.answer(text=f'Ошибка: {err}', reply_markup=kb_cancel_fsm)
-        await state.reset_data()
-        await state.finish()
+# @dp.message_handler(state=MailStats.finish, content_types=ContentTypes.ANY)
+# async def general_date_catch(message: Message, state: FSMContext):
+#     try:
+#         text1 = message.text
+#         comment = '\n' + text1
+#         data = await state.get_data()
+#         data_obj = data.get('general_date').strftime('%d-%m-%Y')
+#         await get_mail_for_date(data_obj, data.get('general_date'), comment)
+#         await message.answer(text='Рассылка прошла успешно')
+#         await MailStats.next()
+#     except Exception as err:
+#         await message.answer(text=f'Ошибка: {err}', reply_markup=kb_cancel_fsm)
+#         await state.reset_data()
+#         await state.finish()
