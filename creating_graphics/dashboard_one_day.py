@@ -98,6 +98,7 @@ def created_bar(db_method, colors: list, t_label: str, f_label: str,
         plt.title(t_label, fontsize=17)
         mplcyberpunk.add_bar_gradient(bars=bars)
         plt.savefig(f'./cred/{f_label}-{date_obj}.jpg')
+        plt.close('all')
         return 1
     else:
         return 0
@@ -127,6 +128,7 @@ def horizontal_bar(date_obj):
         mplcyberpunk.add_bar_gradient(bars=bars1)
         mplcyberpunk.add_bar_gradient(bars=bars)
         plt.savefig(f'./cred/sla-{date_obj}.jpg')
+        plt.close('all')
         return 1
     else:
         return 0
@@ -155,6 +157,7 @@ def general_pie_graf(date_obj: str):
                         f"Новых анкет: {pl_request.item(0, 'new')}\n"
                        f"Проверено за 15 минут: {pl_request.item(0, 'fast')}")
         plt.savefig(f'./cred/general-{date_obj}.jpg')
+        plt.close('all')
         return 1
     else:
         return 0
