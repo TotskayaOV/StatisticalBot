@@ -5,7 +5,7 @@ from loader import db, dp
 from controller import read_user_wb_data
 from creating_graphics import statistic_image_day
 
-async def get_mail_for_date(date_obj, date, coor_comment):
+async def get_mail_for_date(date_obj, date, coor_comment=''):
     all_user = db.get_user()
     made_picture = statistic_image_day(date.strftime('%Y-%m-%d'))
     if made_picture is True:
