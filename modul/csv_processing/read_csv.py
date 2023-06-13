@@ -73,7 +73,7 @@ def read_call_file(path: str) -> list:
     :return: [{'date': '', 'action': '', 'name': ''}]
     '''
     db_list = []
-    with open(path, 'r', encoding='mbcs') as file:
+    with open(path, 'r', encoding='UTF-8') as file:
         my_list = file.readlines()
         for line in range(2, len(my_list)):
             temp_string = my_list[line]
