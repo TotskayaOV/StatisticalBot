@@ -155,6 +155,11 @@ class DataBase:
         sql = '''UPDATE evolutions SET mean_evolutions=? WHERE id=? '''
         self.execute(sql, parameters, commit=True)
 
+    def update_call(self, new_data: dict):
+        parameters = (new_data.get('count'), new_data.get('id'))
+        sql = '''UPDATE call SET count=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
     def get_user(self):
         sql = '''SELECT * FROM user'''
         return self.execute(sql, fetchall=True)

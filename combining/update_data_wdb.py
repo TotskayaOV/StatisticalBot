@@ -119,34 +119,37 @@ def update_wdb_time_jira():
 
 
 def update_wdb_call():
+    """
+    Функция производит запись и перезапись данных в БД. Получает данные выделенные из файла, загруженного
+    администратором.
+    Формируется словарь из данных о зарегистрированных пользователях users_dict{Фамилия: id}
+    В цкиле по ключам изначального словаря dict_count делается запрос на наличие записей за дату в БД
+    Если данные есть, формируется словарь dict_db_call{users_id: id_записи}.
+    Далее проверяется наличие пользователя в dict_db_call, если поиск по ключу Фамилия дает результат отличный
+    от 0, то производится перезапись данных. Если пользователь не найден то добавляются новые данные.
+    :return: None
+    """
     dict_count = processing_call(read_call_file('./cred/call.csv'))
-    list_date = dict_count.keys()
-    for elem in list_date:
-        data_portal = db.get_call(date=elem)
-        if data_portal:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                corrector = True
-                for i_tuple in data_portal:
-                    if i_tuple[2] == tg_id:
-                        corrector = False
-                if corrector:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'count': dict_count.get(elem).get(name_key)}
-                    db.add_call(new_entry)
+    users_dict = {elem[1]: elem[0] for elem in db.get_user()}
+    for date_elem in dict_count.keys():
+        list_values = dict_count.get(date_elem)
+        data_db_call = db.get_call(date=date_elem)
+        if data_db_call:
+            dict_db_call = {elem[2]: elem[0] for elem in data_db_call}
+            for lt_ft_name, count_call in list_values.items():
+                if dict_db_call.get(users_dict.get(lt_ft_name.split(" ")[0]), 0) == 0:
+                    db.add_call({'date': date_elem,
+                                 'user': users_dict.get(lt_ft_name.split(" ")[0]),
+                                 'count': count_call})
+                else:
+                    db.update_call({'count': count_call,
+                                    'id': dict_db_call.get(users_dict.get(lt_ft_name.split(" ")[0]))})
         else:
-            list_name = dict_count.get(elem).keys()
-            for name_key in list_name:
-                name = name_key.split(" ")[0]
-                tg_id = db.get_the_user(name=name)[0]
-                if tg_id:
-                    new_entry = {'date': elem,
-                                 'user': tg_id,
-                                 'count': dict_count.get(elem).get(name_key)}
-                    db.add_call(new_entry)
+            for lt_ft_name, count_call in list_values.items():
+                    db.add_call({'date': date_elem,
+                                 'user': users_dict.get(lt_ft_name.split(" ")[0]),
+                                 'count': count_call})
+
 
 def update_coordinator_evolutions(path: str):
     dict_data = processing_coordinator_evaluations(reade_coordinator_evaluations(path))

@@ -87,10 +87,13 @@ def processing_count_jira(parsed_data: list) -> dict:
 def processing_call(parsed_data: list):
     data = {}
     dict_line = {}
-    date_line = datetime.strptime(parsed_data[0][0].replace('"', ''), "%d.%m.%Y")
     for elem in parsed_data:
-        if int(elem[2]) + int(elem[3]) != 0:
-            dict_line[elem[1].replace('"', '')] = int(elem[2]) + int(elem[3])
+        date_line = datetime.strptime(elem[0].replace('"', ''), "%d.%m.%Y %H:%M:%S") \
+            .replace(hour=0, minute=0, second=0)
+        if not dict_line or dict_line.get(elem[2].replace('"', ''), 0) == 0:
+            dict_line[elem[2].replace('"', '')] = 1
+        else:
+            dict_line[elem[2].replace('"', '')] = dict_line.get(elem[2].replace('"', '')) + 1
     data[date_line] = dict_line
     return data
 

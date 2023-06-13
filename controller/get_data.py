@@ -51,10 +51,12 @@ def read_wb_data(data_obj, date):
             if int(elem[2]) == 111121:
                 is_Po = True
             if int(elem[2]) != 111121:
-                jira_sla_string = jira_sla_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3] * 100) + '%\n'
+                jira_sla_string = jira_sla_string + (db.get_the_user(id=elem[2]))[1] + ': '\
+                                  + str(round(elem[3] * 100, 2)) + '%\n'
                 all_sla = all_sla + (elem[3] * 100)
         if is_Po:
-            jira_sla_string = jira_sla_string + '\nSLA отдела: ' + str(round(all_sla / (len(jira_sla_data)-1), 1)) + '%\n'
+            jira_sla_string = jira_sla_string + '\nSLA отдела: '\
+                              + str(round(all_sla / (len(jira_sla_data)-1), 1)) + '%\n'
         else:
             jira_sla_string = jira_sla_string + '\nSLA отдела: ' + str(round(all_sla/len(jira_sla_data), 1)) + '%\n'
     else:
@@ -76,8 +78,8 @@ def read_wb_data(data_obj, date):
         all_evo = 0
         for elem in evolution_data:
             evolutions_string = evolutions_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3]) + '\n'
-            all_evo = (all_evo + elem[3]) / 2
-        evolutions_string = evolutions_string + '\nОценка отдела: ' + str(round(all_evo, 2)) + '\n'
+            all_evo = all_evo + elem[3]
+        evolutions_string = evolutions_string + '\nОценка отдела: ' + str(round((all_evo/len(evolution_data)), 2)) + '\n'
     else:
         evolutions_string = evolutions_string + "данных за эту дату нет. 😔\n"
     full_string = 'Данные за ' + data_obj + '\n' + general_string + portal_string + jira_count_string\
