@@ -58,6 +58,15 @@ def read_user_wb_data(data_obj, date, user_id):
             if elem[2] == user_id:
                 call_string = call_string + str(elem[3]) + '\n'
             all_call = all_call + elem[3]
+    evolution_data = db.get_evolutions(date_ev=date.date())
+    evol_string = ''
+    evo_all = 0
+    if evolution_data:
+        for elem in evolution_data:
+            evo_all = evo_all + elem[3]
+            if elem[2] == user_id:
+                check_emod = elem[3]
+                evol_string = evol_string + str(elem[3]) + '\n'
     full_string = 'Данные за ' + data_obj + ':\n'
     if general_string:
         full_string = full_string + general_string
@@ -83,7 +92,9 @@ def read_user_wb_data(data_obj, date, user_id):
                 all_sla/len(jira_sla_data), 1)) + '%\n'
     if all_call:
         full_string = full_string + 'Общее количество звонков: ' + str(all_call) + '\n'
-    if portal_string or jira_count_string or jira_time_string or jira_sla_string or call_string:
+    if evo_all:
+        full_string = full_string + 'Оценка отдела за день: ' + str(round(evo_all / len(evolution_data), 2)) + '\n'
+    if portal_string or jira_count_string or jira_time_string or jira_sla_string or call_string or evol_string:
         full_string = full_string + '\nТвои показатели:\n'
         if portal_string:
             full_string = full_string + '\n🧑🏻‍💻Результаты по порталу:\n' + portal_string
@@ -95,6 +106,11 @@ def read_user_wb_data(data_obj, date, user_id):
             full_string += '📊SLA выполнения заявок: ' + jira_sla_string
         if call_string:
             full_string += '📞 Количество звонков: ' + call_string
+        if evol_string:
+            if check_emod >= 90:
+                full_string += '✅ Оценка за день: ' + evol_string
+            else:
+                full_string += '⛔️ Оценка за день: ' + evol_string
     return (full_string)
 
 def read_user_period(que_dict: dict):

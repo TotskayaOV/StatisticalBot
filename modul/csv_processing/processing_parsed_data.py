@@ -32,7 +32,7 @@ def processing_time_jira(parsed_data: list):
                 else:
                     dict_line[parsed_data[0][indication]] = f'{minutes}:{seconds}'
         data[date_line] = dict_line
-    return(data)
+    return data
 
 def processing_SLA_jira(parsed_data: list):
     data = {}
@@ -93,3 +93,50 @@ def processing_call(parsed_data: list):
             dict_line[elem[1].replace('"', '')] = int(elem[2]) + int(elem[3])
     data[date_line] = dict_line
     return data
+
+def processing_between_time(data_list: list) -> list:
+    """
+    Обратным циклом проходит по данным и собрает в словарь идентификаторы пользователя начиная с первого
+    упоминания статуса 'ReviewRequested'. Временные метки добавляются к списку по мере совпадения идентификаторов
+    с ключом.
+    В цикле по словарю вычисляется разница между ближайшими значениями (исключая values = 1 и значения не имеющие пары).
+    Значения timedelta переводятся в показатель количества минут(float).
+    Задается ключ, в качестве значения передается список с параметрами: id_партнера, да авхода, дата выхода, дельта
+    :return: timedelta_dict
+    """
+    timestamps_temp_dict = {}
+    for elem in range(len(data_list)-1, -1, -1):
+        if data_list[elem][2] == 'ReviewRequested':
+            if not timestamps_temp_dict or timestamps_temp_dict.get(data_list[elem][0], 0) == 0:
+                timestamps_temp_dict[data_list[elem][0]] = [data_list[elem][1]]
+            else:
+                timestamps_temp_dict[data_list[elem][0]].append(data_list[elem][1])
+        else:
+            if timestamps_temp_dict and timestamps_temp_dict.get(data_list[elem][0], 0) != 0:
+                timestamps_temp_dict[data_list[elem][0]].append(data_list[elem][1])
+    timedelta_dict = {}
+    key_value = 0
+    for ident, time_list in timestamps_temp_dict.items():
+        if len(time_list) > 1:
+            for i in range(0, len(time_list)-1, 2):
+                timedelta_list = []
+                time_result = datetime.strptime(time_list[i+1], '%Y-%m-%dT%H:%M:%S.%f')\
+                              - datetime.strptime(time_list[i], '%Y-%m-%dT%H:%M:%S.%f')
+                total_minuts = time_result.total_seconds() / 60
+                timedelta_list.append(ident)
+                timedelta_list.append(time_list[i])
+                timedelta_list.append(time_list[i+1])
+                timedelta_list.append(total_minuts)
+                timedelta_dict[key_value] = timedelta_list
+                key_value +=1
+    return timedelta_dict
+
+def processing_coordinator_evaluations(data_list: list) -> dict:
+    evalutions_dict = {}
+    for elem in data_list:
+        if not evalutions_dict or evalutions_dict.get(elem[2], 0) == 0:
+            evalutions_dict[elem[2]] = int(elem[0])
+        else:
+            evalutions_dict[elem[2]] = (evalutions_dict.get(elem[2]) + int(elem[0])) / 2
+    done_data = {datetime.strptime(data_list[0][4].split(' ')[0], '%d.%m.%Y').date(): evalutions_dict}
+    return done_data

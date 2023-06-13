@@ -9,7 +9,7 @@ from view.keyboards import kb_cancel_fsm, kb_yesno, kb_yesno_inline, yesno_data,
 from controller import read_wb_data
 
 from combining import update_wdb_portal, update_wdb_count_jira, update_wdb_sla_jira
-from combining import update_wdb_time_jira, update_wdb_call, update_wdb_general
+from combining import update_wdb_time_jira, update_wdb_call, update_wdb_general, update_coordinator_evolutions
 
 
 class NewFiles(StatesGroup):
@@ -23,6 +23,7 @@ class NewFiles(StatesGroup):
     sla_file = State()
     time_file = State()
     call_file = State()
+    evol_file = State()
     yes_no = State()
     go_message = State()
 
@@ -80,6 +81,9 @@ async def chose_next_step(message: Message, state: FSMContext):
     elif message.text == 'Time JIRA':
         await message.answer(text='Загрузите файл данных времени выолнения заявок Jira')
         await NewFiles.time_file.set()
+    elif message.text == 'Оценки':
+        await message.answer(text='Загрузите файл данных по оценкам')
+        await NewFiles.evol_file.set()
     elif message.text == 'Завершить':
         await message.answer(text='Вы хотите завершить загрузку данных?', reply_markup=kb_yesno_inline)
         await NewFiles.yes_no.set()
@@ -233,6 +237,36 @@ async def call_catch(message: Message, state: FSMContext):
             finally:
                 try:
                     os.remove('./cred/call.csv')
+                    await NewFiles.next_step.set()
+                except Exception as err:
+                    await message.answer(text=f'Ошибка удаления файлов: {err}')
+                    await state.reset_data()
+                    await state.finish()
+
+@dp.message_handler(state=NewFiles.evol_file, content_types=ContentTypes.ANY)
+async def evol_catch(message: Message, state: FSMContext):
+    if document := message.document:
+        await state.update_data({'evol_file': True})
+        await document.download(destination_file=f'./cred/{document.file_name}')
+        try:
+            os.rename(f'./cred/{document.file_name}', './cred/evolutions.csv')
+        except:
+            os.remove('./cred/evolutions.csv')
+            os.rename(f'./cred/{document.file_name}', './cred/evolutions.csv')
+        finally:
+            try:
+                update_coordinator_evolutions('./cred/evolutions.csv')
+            except Exception as err:
+                await message.answer(text=f'Ошибка загрузки данных. Проверьте файл:'
+                                          f'расширение, кодировку, формат данных. \n'
+                                          f'Или передайте данные об ошибке: {err}')
+                await state.reset_data()
+                await state.finish()
+            else:
+                await message.answer(text='Данные загружены', reply_markup=kb_name_files)
+            finally:
+                try:
+                    os.remove('./cred/evolutions.csv')
                     await NewFiles.next_step.set()
                 except Exception as err:
                     await message.answer(text=f'Ошибка удаления файлов: {err}')

@@ -81,3 +81,22 @@ def read_call_file(path: str) -> list:
             db_list.append(temp_string2.split(';'))
         return db_list
 
+def reade_between_time(path_file='./cred/difference.csv') -> list:
+    db_list = []
+    with open(path_file, 'r', encoding='UTF-8') as file:
+        my_list = file.readlines()
+        for line in range(1, len(my_list)):
+            temp_string = my_list[line]
+            temp_string2 = temp_string.rstrip("\n")
+            db_list.append(temp_string2.split(','))
+        return db_list
+
+def reade_coordinator_evaluations(path_file='./cred/evolutions.csv') -> list:
+    db_list = []
+    with open(path_file, 'r', encoding='UTF-8') as file:
+        my_list = file.readlines()
+        for line in range(1, len(my_list)):
+            temp_string = my_list[line]
+            temp_string2 = temp_string.rstrip("\n")
+            db_list.append(temp_string2.split(';'))
+        return db_list

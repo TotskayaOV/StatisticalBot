@@ -69,9 +69,20 @@ def read_wb_data(data_obj, date):
         call_string = call_string + '\nОбщее количество звонков: ' + str(all_call) + '\n'
     else:
         call_string = call_string + "данных за эту дату нет. 😔\n"
+
+    evolution_data = db.get_evolutions(date_ev=date.date())
+    evolutions_string = '\n📞Оценки:\n\n'
+    if evolution_data:
+        all_evo = 0
+        for elem in evolution_data:
+            evolutions_string = evolutions_string + (db.get_the_user(id=elem[2]))[1] + ': ' + str(elem[3]) + '\n'
+            all_evo = (all_evo + elem[3]) / 2
+        evolutions_string = evolutions_string + '\nОценка отдела: ' + str(round(all_evo, 2)) + '\n'
+    else:
+        evolutions_string = evolutions_string + "данных за эту дату нет. 😔\n"
     full_string = 'Данные за ' + data_obj + '\n' + general_string + portal_string + jira_count_string\
-                  + jira_time_string + jira_sla_string + call_string
-    return (full_string)
+                  + jira_time_string + jira_sla_string + call_string + evolutions_string
+    return full_string
 
 def read_wb_period(que_dict: dict):
     """

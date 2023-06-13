@@ -10,6 +10,8 @@ from modul import read_count_jira_file
 from modul import processing_count_jira
 from modul import read_call_file
 from modul import processing_call
+from modul import reade_coordinator_evaluations
+from modul import processing_coordinator_evaluations
 
 
 def rewriting_data_db_jira(dict_table: dict):
@@ -145,3 +147,18 @@ def update_wdb_call():
                                  'user': tg_id,
                                  'count': dict_count.get(elem).get(name_key)}
                     db.add_call(new_entry)
+
+def update_coordinator_evolutions(path: str):
+    dict_data = processing_coordinator_evaluations(reade_coordinator_evaluations(path))
+    users_list = db.get_user()
+    users_dict = {}
+    for elem in users_list:
+        users_dict[elem[1]] = elem[0]
+    for key, value in dict_data.items():
+        date_upd = key
+        check_db = db.get_evolutions(date_ev=date_upd)
+        if not check_db:
+            for key_d, value_d in value.items():
+                db.add_evolutions({'date_ev': date_upd,
+                                   'user_id': users_dict.get(key_d.split(" ")[0]),
+                                   'mean_evolutions': value_d})

@@ -35,11 +35,11 @@ class DataBase:
         date DATETIME, user INTEGER, count INTEGER)'''
         self.execute(sql, commit=True)
 
-    # def create_table_portal(self):
-    #     sql = '''CREATE TABLE IF NOT EXISTS portal
-    #      (id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #       date DATETIME, user INTEGER, verif INTEGER, check INTEGER)'''
-    #     self.execute(sql, commit=True)
+    def create_table_evolutions(self):
+        sql = '''CREATE TABLE IF NOT EXISTS evolutions
+         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+          date_ev DATETIME, user_id INTEGER, mean_evolutions INTEGER)'''
+        self.execute(sql, commit=True)
 
     def create_table_portal(self):
         sql = '''CREATE TABLE IF NOT EXISTS portal 
@@ -105,6 +105,12 @@ class DataBase:
     def add_jira_time(self, jira_data: dict):
         parameters = (jira_data.get('date'), jira_data.get('user'), jira_data.get('time'))
         sql = '''INSERT INTO jira_time (date, user, time) 
+        VALUES (?, ?, ?)'''
+        self.execute(sql, parameters, commit=True)
+
+    def add_evolutions(self, evu_data: dict):
+        parameters = (evu_data.get('date_ev'), evu_data.get('user_id'), evu_data.get('mean_evolutions'))
+        sql = '''INSERT INTO evolutions (date_ev, user_id, mean_evolutions) 
         VALUES (?, ?, ?)'''
         self.execute(sql, parameters, commit=True)
 
@@ -180,6 +186,11 @@ class DataBase:
 
     def get_jira_time(self, **kwargs):
         sql = '''SELECT * FROM jira_time WHERE '''
+        sql, parameters = self.extract_kwargs(sql, kwargs)
+        return self.execute(sql, parameters, fetchall=True)
+
+    def get_evolutions(self, **kwargs):
+        sql = '''SELECT * FROM evolutions WHERE '''
         sql, parameters = self.extract_kwargs(sql, kwargs)
         return self.execute(sql, parameters, fetchall=True)
 

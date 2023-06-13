@@ -28,6 +28,7 @@ async def on_startup(_):
         db.create_table_jira_sla()
         db.create_table_jira_time()
         db.create_table_general_data()
+        db.create_table_evolutions()
         notify(log_id, 'DataBase .... Ok!')
     except sqlite3.OperationalError:
         notify(log_id, 'DataBase .... фиг вам, а не датабаза')

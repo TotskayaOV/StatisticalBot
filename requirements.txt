@@ -3,3 +3,5 @@ requests~=2.28.2
 matplotlib~=3.7.1
 mplcyberpunk~=0.7.0
 polars~=0.17.15
+XlsxWriter~=3.1.2
+
