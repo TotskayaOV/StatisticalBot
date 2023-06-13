@@ -150,6 +150,11 @@ class DataBase:
         sql = '''UPDATE jira_time SET time=? WHERE id=? '''
         self.execute(sql, parameters, commit=True)
 
+    def update_evolutions(self, new_data: dict):
+        parameters = (new_data.get('mean_evolutions'), new_data.get('id'))
+        sql = '''UPDATE evolutions SET mean_evolutions=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
     def get_user(self):
         sql = '''SELECT * FROM user'''
         return self.execute(sql, fetchall=True)
@@ -194,6 +199,12 @@ class DataBase:
         sql, parameters = self.extract_kwargs(sql, kwargs)
         return self.execute(sql, parameters, fetchall=True)
 
+    def get_the_evolutions(self, check_data: dict):
+        parameters = (check_data.get('date_ev'), check_data.get('user_id'))
+        sql = '''SELECT * FROM evolutions WHERE date_ev=? AND user_id=? '''
+        return self.execute(sql, parameters, fetchall=True)
+
+
     def get_general(self, date):
         parameters = (date, )
         sql = '''SELECT * FROM general_data WHERE date=?'''
@@ -208,6 +219,11 @@ class DataBase:
     def remove_general(self, date):
         parameters = (date,)
         sql = '''DELETE FROM general_data WHERE date=?'''
+        self.execute(sql, parameters, commit=True)
+
+    def remove_evolutions(self, date):
+        parameters = (date,)
+        sql = '''DELETE FROM evolutions WHERE date_ev=?'''
         self.execute(sql, parameters, commit=True)
 
     def remove_call(self, date):

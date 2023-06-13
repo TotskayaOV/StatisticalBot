@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def processing_data_portal(parsed_data: list):
     data = {}
@@ -134,9 +134,16 @@ def processing_between_time(data_list: list) -> list:
 def processing_coordinator_evaluations(data_list: list) -> dict:
     evalutions_dict = {}
     for elem in data_list:
-        if not evalutions_dict or evalutions_dict.get(elem[2], 0) == 0:
-            evalutions_dict[elem[2]] = int(elem[0])
+        time_mark = datetime.strptime(elem[4].split(' ')[0], '%d.%m.%Y').date()
+        if not evalutions_dict or evalutions_dict.get(time_mark, 0) == 0:
+            evalutions_dict[time_mark] = {elem[2]: int(elem[0])}
         else:
-            evalutions_dict[elem[2]] = (evalutions_dict.get(elem[2]) + int(elem[0])) / 2
-    done_data = {datetime.strptime(data_list[0][4].split(' ')[0], '%d.%m.%Y').date(): evalutions_dict}
-    return done_data
+            if evalutions_dict.get(time_mark).get(elem[2], 0) == 0:
+                temp_dict = evalutions_dict.get(time_mark)
+                temp_dict[elem[2]] = int(elem[0])
+                evalutions_dict[time_mark] = temp_dict
+            else:
+                temp_dict = evalutions_dict.get(time_mark)
+                temp_dict[elem[2]] = (temp_dict.get(elem[2]) +int(elem[0])) / 2
+                evalutions_dict[time_mark] = temp_dict
+    return evalutions_dict

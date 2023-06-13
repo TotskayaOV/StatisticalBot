@@ -156,9 +156,11 @@ def update_coordinator_evolutions(path: str):
         users_dict[elem[1]] = elem[0]
     for key, value in dict_data.items():
         date_upd = key
-        check_db = db.get_evolutions(date_ev=date_upd)
-        if not check_db:
-            for key_d, value_d in value.items():
+        for key_d, value_d in value.items():
+            check_db = db.get_the_evolutions({'date_ev': date_upd, 'user_id': users_dict.get(key_d.split(" ")[0])})
+            if not check_db:
                 db.add_evolutions({'date_ev': date_upd,
                                    'user_id': users_dict.get(key_d.split(" ")[0]),
                                    'mean_evolutions': value_d})
+            else:
+                db.update_evolutions({'mean_evolutions': value_d, 'id': check_db[0][0]})
