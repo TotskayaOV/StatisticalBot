@@ -15,7 +15,7 @@ async def mes_start(message: Message, admin: bool, coordinator: bool):
                              f'за период\n/us_period - показать статистику пользователя за период'
                              f'\n\nиндивидуальные:\n'
                              f'/result - показать статистику за дату (частная)\n/start - старт\n\nна случай alarm:\n'
-                             f'/del_count\t/del_sla\t/del_portal\t/del_count\t/del_time')
+                             f'/del_count\t/del_sla\t/del_portal\t/del_evol\t/del_time')
     elif coordinator:
         await message.answer(f'/result - посмотреть статистику за определенную дату. Дата вводится после запроса'
                              f'бота в формате год-месяц-день 🤓')

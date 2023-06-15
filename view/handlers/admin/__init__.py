@@ -16,5 +16,6 @@ from .request_by_period import dp
 from .show_us_result_by_period import dp
 from .request_by_period_small import dp
 from .upload_time import dp
+from .del_evolutions import dp
 
 __all__ = ['dp']
