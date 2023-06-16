@@ -88,7 +88,7 @@ def processing_call(parsed_data: list):
     data = {}
     dict_line = {}
     for elem in parsed_data:
-        date_line = datetime.strptime(elem[0].replace('"', ''), "%d.%m.%Y %H:%M:%S") \
+        date_line = datetime.strptime(elem[0].replace('"', ''), "%d.%m.%Y %H:%M") \
             .replace(hour=0, minute=0, second=0)
         if not dict_line or dict_line.get(elem[2].replace('"', ''), 0) == 0:
             dict_line[elem[2].replace('"', '')] = 1
