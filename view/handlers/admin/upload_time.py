@@ -36,7 +36,7 @@ async def portal_catch(message: Message, state: FSMContext):
             try:
                 result = difference_between_time()
                 text = f"Медиана: {round(result.get('median'), 2)} минут" \
-                       f"\nСредне арифметическое: {round(result.get('mean'), 2)} минут"
+                   f"\nСредне арифметическое: {round(result.get('mean'), 2)} минут"
             except Exception as err:
                 await message.answer(text=f'Ошибка загрузки данных. Проверьте файл:'
                                           f'расширение, кодировку, формат данных. (Внимание, все ФИО указнные в файле'

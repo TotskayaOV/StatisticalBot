@@ -124,8 +124,12 @@ def processing_between_time(data_list: list) -> list:
         if len(time_list) > 1:
             for i in range(0, len(time_list)-1, 2):
                 timedelta_list = []
-                time_result = datetime.strptime(time_list[i+1], '%Y-%m-%dT%H:%M:%S.%f')\
-                              - datetime.strptime(time_list[i], '%Y-%m-%dT%H:%M:%S.%f')
+                if ',' in time_list[i]:
+                    time_result = datetime.strptime(time_list[i+1], '%Y-%m-%dT%H:%M:%S,%f')\
+                                  - datetime.strptime(time_list[i], '%Y-%m-%dT%H:%M:%S,%f')
+                else:
+                    time_result = datetime.strptime(time_list[i + 1], '%Y-%m-%dT%H:%M:%S.%f') \
+                                  - datetime.strptime(time_list[i], '%Y-%m-%dT%H:%M:%S.%f')
                 total_minuts = time_result.total_seconds() / 60
                 timedelta_list.append(ident)
                 timedelta_list.append(time_list[i])
