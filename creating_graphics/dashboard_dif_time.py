@@ -6,6 +6,10 @@ from PIL import Image
 import numpy as np
 
 
+def addlabels2(x,y):
+    for i in range(len(x)):
+        plt.text(i, y[i]//2,y[i], ha = 'center')
+
 def graph_differrence_time(data_frame, series_time):
     median_time = series_time.median()
     mean_time = series_time.mean()
@@ -15,6 +19,8 @@ def graph_differrence_time(data_frame, series_time):
     plt.savefig(f'./cred/boxplot.jpg')
     fig, ax = plt.subplots(figsize=(5, 5), layout='constrained')
     bars = ax.bar(data_frame['col2'], data_frame['count'], color=inner_colors, zorder=2)
+    addlabels2(data_frame['col2'], data_frame['count'])
+    ax.set_yticks([])
     mplcyberpunk.add_bar_gradient(bars=bars)
     plt.savefig(f'./cred/bar.jpg')
     fig, ax = plt.subplots(figsize=(5, 5), layout='constrained')

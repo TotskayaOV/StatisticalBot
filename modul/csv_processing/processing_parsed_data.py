@@ -110,7 +110,7 @@ def processing_between_time(data_list: list) -> list:
     """
     timestamps_temp_dict = {}
     for elem in range(len(data_list)-1, -1, -1):
-        if data_list[elem][2] == 'ReviewRequested':
+        if data_list[elem][2] == 'SavedAsFilled':
             if not timestamps_temp_dict or timestamps_temp_dict.get(data_list[elem][0], 0) == 0:
                 timestamps_temp_dict[data_list[elem][0]] = [data_list[elem][1]]
             else:

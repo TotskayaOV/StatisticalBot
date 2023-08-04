@@ -84,9 +84,10 @@ def read_call_file(path: str) -> list:
 def reade_between_time(path_file='./cred/difference.csv') -> list:
     db_list = []
     with open(path_file, 'r', encoding='UTF-8') as file:
-        csv_reader = csv.reader(file, quoting=csv.QUOTE_ALL)
-        for row in csv_reader:
-            db_list.append(row)
+        csv_reader = csv.reader(file, delimiter=',', quoting=csv.QUOTE_ALL)
+        for line_num, row in enumerate(csv_reader):
+            if line_num >= 2:  # Пропуск первых двух строк
+                db_list.append(row)
         return db_list
 
 def reade_coordinator_evaluations(path_file='./cred/evolutions.csv') -> list:
