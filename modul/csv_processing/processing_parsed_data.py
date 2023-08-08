@@ -101,7 +101,7 @@ def processing_call(parsed_data: list):
 def processing_between_time(data_list: list) -> list:
     """
     Обратным циклом проходит по данным и собрает в словарь идентификаторы пользователя начиная с первого
-    упоминания статуса 'ReviewRequested'. Временные метки добавляются к списку по мере совпадения идентификаторов
+    упоминания статуса 'SavedAsFilled'. Временные метки добавляются к списку по мере совпадения идентификаторов
     с ключом.
     В цикле по словарю вычисляется разница между ближайшими значениями (исключая values = 1 и значения не имеющие пары).
     Значения timedelta переводятся в показатель количества минут(float).
@@ -155,3 +155,27 @@ def processing_coordinator_evaluations(data_list: list) -> dict:
                 temp_dict[elem[2]] = (temp_dict.get(elem[2]) +int(elem[0])) / 2
                 evalutions_dict[time_mark] = temp_dict
     return evalutions_dict
+
+def processing_between_day(data_list: list) -> list:
+    """
+    Обратным циклом проходит по данным и собрает в словарь идентификаторы пользователя начиная с первого
+    упоминания статуса 'SavedAsFilled'. Временные метки добавляются к списку по мере совпадения идентификаторов
+    с ключом.
+    В цикле по словарю вычисляется разница между ближайшими значениями (исключая values = 1 и значения не имеющие пары).
+    Значения timedelta переводятся в показатель количества минут(float).
+    Задается ключ, в качестве значения передается список с параметрами: id_партнера, да авхода, дата выхода, дельта
+    :return: timedelta_dict
+    """
+    timestamps_temp_dict = {}
+    point_day = data_list[-1][1].split('T')[0]
+    temp_list = []
+    for elem in data_list[::-1]:
+        if elem[1].split('T')[0] == point_day:
+            temp_list.insert(0, elem)
+        else:
+            timestamps_temp_dict[point_day] = processing_between_time(temp_list)
+            point_day = elem[1].split('T')[0]
+            temp_list.clear()
+            temp_list.insert(0, elem)
+    timestamps_temp_dict[point_day] = processing_between_time(temp_list)
+    return timestamps_temp_dict

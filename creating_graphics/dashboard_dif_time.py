@@ -41,3 +41,29 @@ def graph_differrence_time(data_frame, series_time):
     new_im.paste(img_ran3, (img_size[0], img_size[0]))
     new_im.save(f"./cred/dif_dashboard.png", "PNG")
     return {'median': median_time, 'mean': mean_time}
+
+
+def graph_dif_days(date_dict: dict):
+    plt.style.use("cyberpunk")
+    x = ['0-5', '5-10', '10-15', '15-20', '20-...']
+    dict_for_message = {}
+    date_list = []
+    for date_str, date_tuple in date_dict.items():
+        date_list.append(date_str)
+        ddf = date_tuple[0]
+        data_list = []
+        for elem in x:
+            try:
+                reslt_df = ddf.row(by_predicate=(pl.col("col2") == elem))
+                data_list.append(reslt_df[1])
+            except:
+                data_list.append(0)
+        plt.plot(x, data_list, marker='o')
+        plt.legend(date_str)
+        median_time = date_tuple[1].median()
+        mean_time = date_tuple[1].mean()
+        dict_for_message[date_str] = (median_time, mean_time)
+    plt.legend(date_list)
+    mplcyberpunk.add_glow_effects()
+    plt.savefig(f'./cred/graph_day.jpg')
+    return dict_for_message
