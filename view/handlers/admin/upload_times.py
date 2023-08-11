@@ -35,10 +35,23 @@ async def portal_catch(message: Message, state: FSMContext):
             data = await state.get_data()
             try:
                 result = difference_between_days()
-                text = ''
-                for date_keys, data_value in result.items():
-                    text += f"{date_keys}\nМедиана: {round(data_value[0], 2)} минут" \
-                           f"\nСредне арифметическое: {round(data_value[1], 2)} минут\n\n"
+                if len(result.keys()) > 14:
+                    text = ''
+                    text1 = ''
+                    cnt = 0
+                    for date_keys, data_value in result.items():
+                        if cnt < 15:
+                            text += f"{date_keys}\nМедиана: {round(data_value[0], 2)} минут" \
+                                f"\nСредне арифметическое: {round(data_value[1], 2)} минут\n\n"
+                            cnt += 1
+                        else:
+                            text1 += f"{date_keys}\nМедиана: {round(data_value[0], 2)} минут" \
+                                    f"\nСредне арифметическое: {round(data_value[1], 2)} минут\n\n"
+                else:
+                    text = ''
+                    for date_keys, data_value in result.items():
+                        text += f"{date_keys}\nМедиана: {round(data_value[0], 2)} минут" \
+                               f"\nСредне арифметическое: {round(data_value[1], 2)} минут\n\n"
             except Exception as err:
                 await message.answer(text=f'Ошибка загрузки данных. Проверьте файл:'
                                           f'расширение, кодировку, формат данных. \n'
@@ -48,6 +61,8 @@ async def portal_catch(message: Message, state: FSMContext):
             else:
                 with open('./cred/graph_day.jpg', 'rb') as photo:
                     await message.answer_photo(photo=photo, caption=text)
+                    if text1:
+                        await message.answer(text=text1)
             finally:
                 try:
                     os.remove('./cred/graph_day.jpg')
